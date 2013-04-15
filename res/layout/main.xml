@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    tools:context=".MainActivity" >
+      
+    <Button 
+        android:id="@+id/bn"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="查看联系人"
+        />
+    
+    <Button 
+        android:id="@+id/getContactsButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="获取联系人"
+        />
+    
+    <Button 
+        android:id="@+id/addContactsButton"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="增加联系人"
+        />
+</LinearLayout>
