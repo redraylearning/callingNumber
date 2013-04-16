@@ -59,7 +59,7 @@ public class ContentProviderDemoActivity extends Activity {
 		// addContacts();
 		Intent intent = new Intent();
 		intent.setClass(ContentProviderDemoActivity.this,
-			AddContactsActivity.class);
+			ModifyContactsActivity.class);
 		startActivity(intent);
 	    }
 	});

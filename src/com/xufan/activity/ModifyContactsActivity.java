@@ -15,7 +15,7 @@ import android.widget.Toast;
 
 import com.xufan.callingnumber.R;
 
-public class AddContactsActivity extends Activity {
+public class ModifyContactsActivity extends Activity {
 
 	private EditText familyName;
 	private EditText givenName;
@@ -47,7 +47,7 @@ public class AddContactsActivity extends Activity {
 					Toast toast=Toast.makeText(getApplicationContext(), "增加成功!", Toast.LENGTH_SHORT);
 					toast.show();
 					Intent intent = new Intent();
-					intent.setClass(AddContactsActivity.this,
+					intent.setClass(ModifyContactsActivity.this,
 							ContentProviderDemoActivity.class);
 					startActivity(intent);
 				}else

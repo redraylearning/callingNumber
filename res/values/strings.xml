@@ -4,5 +4,16 @@
     <string name="app_name">CallingNumber</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="username">请输入用户名</string>
+    <string name="sure">确定</string>
+    <string name="cancle">取消</string>
+    <string name="phonenum">手机号:</string>
+    <string name="name">姓名:</string>
+    <string name="email">email:</string>
+    <string name="sending_request">正在发送请求</string>
+    <string name="login">登 录</string>
+    <string name="account">输入账号</string>
+    <string name="myaccount">我的账号</string>
+    <string name="editMyself">编辑我的信息</string>
 
 </resources>
