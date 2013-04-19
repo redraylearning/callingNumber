@@ -1,3 +1,21 @@
+/**********************************************************************
+ * FILE			：ContactsActivity.java
+ * PACKAGE		：com.xufan.activity
+ * AUTHOR		：xufan
+ * DATE			：2013-4-17 上午10:27:47
+ * FUNCTION		：
+ *
+ * 杭州思伟版权所有
+ *======================================================================
+ * CHANGE HISTORY LOG
+ *----------------------------------------------------------------------
+ * MOD. NO.|  DATE    | NAME           | REASON            | CHANGE REQ.
+ *----------------------------------------------------------------------
+ *         |          | xufan       | Created           |
+ *
+ * DESCRIPTION:
+ *
+ ***********************************************************************/
 package com.xufan.activity;
 
 import android.os.Bundle;
@@ -6,13 +24,28 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.xufan.adapter.SlidingMenu;
 import com.xufan.callingnumber.R;
-import com.xufan.fragmemtn.LeftFragment;
-import com.xufan.fragmemtn.ViewPageFragment;
-import com.xufan.fragmemtn.ViewPageFragment.MyPageChangeListener;
+import com.xufan.fragment.LeftFragment;
+import com.xufan.fragment.ViewPageFragment;
+import com.xufan.fragment.ViewPageFragment.MyPageChangeListener;
 
+/**
+ * 项目名称：CallingNumber
+ * 类名称：ContactsActivity
+ * 类描述：普通用户进入activity界面
+ * 创建人：xufan
+ * 创建时间：2013-4-17 下午4:03:15
+ * -------------------------------修订历史--------------------------
+ * 修改人：xufan
+ * 修改时间：2013-4-17 下午4:03:15
+ * 修改备注：
+ * @version：
+*/
 public class ContactsActivity extends FragmentActivity {
+    /**滑动菜单*/
     SlidingMenu mSlidingMenu;
+    /**菜单fragment*/
     LeftFragment leftFragment;
+    /**主显示fragement*/
     ViewPageFragment viewPageFragment;
 
     @Override
@@ -25,13 +58,10 @@ public class ContactsActivity extends FragmentActivity {
 
     private void init() {
 	mSlidingMenu = (SlidingMenu) findViewById(R.id.slidingMenu);
-	mSlidingMenu.setLeftView(getLayoutInflater().inflate(
-		R.layout.left_frame, null));
-	mSlidingMenu.setCenterView(getLayoutInflater().inflate(
-		R.layout.center_frame, null));
+	mSlidingMenu.setLeftView(getLayoutInflater().inflate(R.layout.left_frame, null));
+	mSlidingMenu.setCenterView(getLayoutInflater().inflate(R.layout.center_frame, null));
 
-	FragmentTransaction t = this.getSupportFragmentManager()
-		.beginTransaction();
+	FragmentTransaction t = this.getSupportFragmentManager().beginTransaction();
 	leftFragment = new LeftFragment();
 	t.replace(R.id.left_frame, leftFragment);
 
@@ -42,7 +72,6 @@ public class ContactsActivity extends FragmentActivity {
 
     private void initListener() {
 	viewPageFragment.setMyPageChangeListener(new MyPageChangeListener() {
-
 	    @Override
 	    public void onPageSelected(int position) {
 		if (viewPageFragment.isFirst()) {

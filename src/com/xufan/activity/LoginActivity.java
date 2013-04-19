@@ -31,7 +31,6 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -44,7 +43,7 @@ import com.xufan.util.DialogFactory;
 /**
  * 项目名称：CallingNumber
  * 类名称：LoginActivity
- * 类描述：
+ * 类描述：登录校验activity
  * 创建人：xufan
  * 创建时间：2013-4-16 下午2:06:59
  * -------------------------------修订历史--------------------------
@@ -63,7 +62,6 @@ public class LoginActivity extends Activity implements OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
-	requestWindowFeature(Window.FEATURE_NO_TITLE);
 	setContentView(R.layout.loginpage);
 	initView();
     }
@@ -94,18 +92,15 @@ public class LoginActivity extends Activity implements OnClickListener {
 			    String result = checkaccount();
 			    cancleDialog();
 			    if (result.equals(Contents.ADMIN)) {
-				Intent intent = new Intent(LoginActivity.this,
-					ModifyContactsActivity.class);
+				Intent intent = new Intent(LoginActivity.this, ModifyContactsActivity.class);
 				startActivity(intent);
 			    } else if (result.equals(Contents.CUSTOMER)) {
-				Intent intent = new Intent(LoginActivity.this,
-					ContactsActivity.class);
+				Intent intent = new Intent(LoginActivity.this, ContactsActivity.class);
 				intent.putExtra("userPhone", inputAccount);
 				startActivity(intent);
 			    } else {
 				Looper.prepare();
-				CustomToast.showToast(LoginActivity.this,
-					"亲,账号错误!");
+				CustomToast.showToast(LoginActivity.this, "亲,账号错误!");
 				Looper.loop();
 			    }
 			} catch (Exception e) {
@@ -134,7 +129,7 @@ public class LoginActivity extends Activity implements OnClickListener {
 	String account = mAccounts.getText().toString();
 	// 判断是否为管理员
 
-	if ("admin".equals(account)) {
+	if ("123".equals(account)) {
 	    return "admin";
 	}
 	Boolean isRight = false;
@@ -160,20 +155,6 @@ public class LoginActivity extends Activity implements OnClickListener {
 	}
     }
 
-    private void showRequestDialog() {
-	if (mDialog != null) {
-	    mDialog.dismiss();
-	    mDialog = null;
-	}
-	mDialog = DialogFactory.creatRequestDialog(this, "正在验证账号...");
-	mDialog.show();
-    }
-
-    @Override
-    public void onBackPressed() {// 捕获返回按键
-	exitDialog(LoginActivity.this, "QQ提示", "亲！您真的要退出吗？");
-    }
-
     /**
      * @方法名：exitDialog
      * @功能描述：退出时的提示框
@@ -195,4 +176,17 @@ public class LoginActivity extends Activity implements OnClickListener {
 		}).setNegativeButton("取消", null).create().show();
     }
 
+    private void showRequestDialog() {
+	if (mDialog != null) {
+	    mDialog.dismiss();
+	    mDialog = null;
+	}
+	mDialog = DialogFactory.creatRequestDialog(this, "正在验证账号...");
+	mDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {// 捕获返回按键
+	exitDialog(LoginActivity.this, "退出提示", "亲！您真的要退出吗？");
+    }
 }

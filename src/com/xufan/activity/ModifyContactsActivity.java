@@ -1,107 +1,147 @@
+/**********************************************************************
+ * FILE			：ModifyContactsActivity.java
+ * PACKAGE		：com.xufan.activity
+ * AUTHOR		：xufan
+ * DATE			：2013-4-17 上午10:27:47
+ * FUNCTION		：
+ *
+ * 杭州思伟版权所有
+ *======================================================================
+ * CHANGE HISTORY LOG
+ *----------------------------------------------------------------------
+ * MOD. NO.|  DATE    | NAME           | REASON            | CHANGE REQ.
+ *----------------------------------------------------------------------
+ *         |          | xufan       | Created           |
+ *
+ * DESCRIPTION:
+ *
+ ***********************************************************************/
 package com.xufan.activity;
 
-import android.app.Activity;
-import android.content.ContentUris;
-import android.content.ContentValues;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.xufan.callingnumber.R;
+import com.xufan.data.User;
+import com.xufan.util.Utils;
 
-public class ModifyContactsActivity extends Activity {
+/**
+ * 项目名称：CallingNumber
+ * 类名称：ModifyContactsActivity
+ * 类描述：管理员进入的activity
+ * 创建人：xufan
+ * 创建时间：2013-4-17 上午10:27:47
+ * -------------------------------修订历史--------------------------
+ * 修改人：xufan
+ * 修改时间：2013-4-17 上午10:27:47
+ * 修改备注：
+ * @version：
+*/
+public class ModifyContactsActivity extends MeunActivity {
+    @SuppressWarnings("rawtypes")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	setContentView(R.layout.admin_contacts);
+	resetListView();
 
-	private EditText familyName;
-	private EditText givenName;
-	private EditText number;
-	private EditText email;
-	private Button addButton;
+	listView.setOnItemClickListener(new OnItemClickListener() {
+	    @Override
+	    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.addcontacts);
+		HashMap item = (HashMap) arg0.getItemAtPosition(arg2);
+		Intent intent = new Intent(ModifyContactsActivity.this, UserDetailActivity.class);
+		User user = new User();
+		user._id = Integer.parseInt(String.valueOf(item.get("_id")));
+		user.email = String.valueOf(item.get("email"));
+		user.mobilePhone = String.valueOf(item.get("mobilephone"));
+		user.username = String.valueOf(item.get("name"));
+		if (item.get("image") == null) {
+		    InputStream is = getResources().openRawResource(R.drawable.head_default);
+		    user.image = Utils.bmpToByteArray(BitmapFactory.decodeStream(is));
+		} else {
+		    user.image = Utils.bmpToByteArray((Bitmap) item.get("image"));
+		}
+		intent.putExtra("user", user);
 
-		//姓
-		familyName = (EditText) findViewById(R.id.FAMILY_NAME);
-		//名
-		givenName = (EditText) findViewById(R.id.GIVEN_NAME);
-		number = (EditText) findViewById(R.id.NUMBER);
-		email = (EditText) findViewById(R.id.EMAIL);
-		addButton = (Button) findViewById(R.id.addContactsButton);
+		// 将arg2作为请求码传过去 用于标识修改项的位置
+		startActivityForResult(intent, arg2);
+	    }
+	});
 
-		addButton.setOnClickListener(new OnClickListener() {
+	listView.setCacheColorHint(Color.TRANSPARENT); // 设置ListView的背景为透明
+	listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+	    @Override
+	    public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		if (deleteId == null) {
+		    deleteId = new ArrayList<Integer>();
+		}
+		HashMap item = (HashMap) arg0.getItemAtPosition(arg2);
+		Integer _id = Integer.parseInt(String.valueOf(item.get("_id")));
 
-			@Override
-			public void onClick(View v) {
+		RelativeLayout r = (RelativeLayout) arg1;
+		ImageView markedView = (ImageView) r.getChildAt(2);
+		if (markedView.getVisibility() == View.VISIBLE) {
+		    markedView.setVisibility(View.GONE);
+		    deleteId.remove(_id);
+		} else {
+		    markedView.setVisibility(View.VISIBLE);
+		    deleteId.add(_id);
+		}
+		return true;
+	    }
+	});
+	// 为list添加item选择器
+	Drawable bgDrawable = getResources().getDrawable(R.drawable.list_bg);
+	listView.setSelector(bgDrawable);
+    }
 
-				if (familyName.getText().toString() != null
-						&& !"".equals(familyName.getText().toString())) {
-					addContacts();
-					Toast toast=Toast.makeText(getApplicationContext(), "增加成功!", Toast.LENGTH_SHORT);
-					toast.show();
-					Intent intent = new Intent();
-					intent.setClass(ModifyContactsActivity.this,
-							ContentProviderDemoActivity.class);
-					startActivity(intent);
-				}else
-				{
-					Toast toast=Toast.makeText(getApplicationContext(), "失败!", Toast.LENGTH_SHORT);
-					toast.show();
-				}
-			}
-		});
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	super.onActivityResult(requestCode, resultCode, data);
+	// 清除deleteId的内容
+	if (deleteId != null) {
+	    deleteId.clear();
 	}
-
-	private void addContacts() {
-		// 插入联系人（占位模版）
-
-		ContentValues values = new ContentValues();
-		//所有操作都是先用getContentResolver方法获得一个内容抉择器，然后调用query或者insert方法。¨
-		Uri rawContactUri = getContentResolver().insert(
-				ContactsContract.RawContacts.CONTENT_URI, values);
-		//先给模版一个id
-		long rawContactId = ContentUris.parseId(rawContactUri);
-
-		// 插入姓名
-		values.clear();
-		values.put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
-		values.put(
-				ContactsContract.Data.MIMETYPE,
-				ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);
-		
-		values.put(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,
-				givenName.getText().toString());
-		values.put(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME,
-				familyName.getText().toString());
-		
-		getContentResolver().insert(ContactsContract.Data.CONTENT_URI, values);
-
-	// 插入电话号码
-		
-		values.clear();	//清空
-		values.put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);	//设置id
-		values.put(ContactsContract.Data.MIMETYPE,
-				ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);	//设置MIMETYPE
-		values.put(ContactsContract.CommonDataKinds.Phone.NUMBER, number
-				.getText().toString());	//设置你要插入的列的值
-		values.put(ContactsContract.CommonDataKinds.Phone.TYPE,
-				ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);	//设置这个值的所输分类
-		getContentResolver().insert(ContactsContract.Data.CONTENT_URI, values);	//insert
-		
-		//插入email
-		values.clear();
-		values.put(ContactsContract.Data.RAW_CONTACT_ID, rawContactId);
-		values.put(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE);
-		values.put(ContactsContract.CommonDataKinds.Email.DATA, email.getText().toString());
-		values.put(ContactsContract.CommonDataKinds.Email.TYPE, ContactsContract.CommonDataKinds.Email.TYPE_HOME);
-		getContentResolver().insert(ContactsContract.Data.CONTENT_URI, values);
+	// 当resultCode==3时代表添加了一个用户返回，当resultCode==4的时候代表修改了用户，或者删除了用户，其他条件代表数据没有变化
+	if (resultCode == 3 || resultCode == 4) {
+	    resetListView();
 	}
+	/**
+	 * resultCode只有3、4、5 
+	 * 当等于4或者5的时候，代表由UserDetailActivity转过来的。在转向UserDetailActivity的时候，requestCode的值设置的是选中项的位置
+	 */
+	if (resultCode == 3) {
+	    listView.setSelection(list.size());
+	} else {
+	    listView.setSelection(requestCode);
+	}
+    }
+
+    /**
+     * 响应点击Menu按钮时的事件，用于设置底部菜单是否可见
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	if (keyCode == KeyEvent.KEYCODE_MENU) {
+	    loadBottomMenu();
+	}
+	return super.onKeyDown(keyCode, event);
+    }
 
 }

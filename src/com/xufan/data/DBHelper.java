@@ -28,6 +28,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.xufan.util.Utils;
+
 /**
  * 项目名称：CallingNumber
  * 类名称：DBHelper
@@ -87,10 +89,11 @@ public class DBHelper {
 	values.put("mobilephone", user.getMobilePhone());
 	values.put("email", user.getEmail());
 	if (isFirstTime) {
-	    values.put("imageid", 0x7f02000a);
+	    values.put("image", "");
 	} else {
-	    values.put("imageid", user.getImageId());
+	    values.put("image", user.getImage());
 	}
+
 	return dbInstance.insert(DB_TABLENAME, null, values);
     }
 
@@ -106,18 +109,37 @@ public class DBHelper {
     public ArrayList<HashMap<String, Object>> getAllUser() {
 	ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
 	Cursor cursor = null;
-	cursor = dbInstance.query(DB_TABLENAME, new String[] { "_id", "name",
-		"mobilephone", "email", "imageid" }, null, null, null, null,
-		null);
+	cursor = dbInstance
+		.query(DB_TABLENAME, new String[] { "_id", "name", "mobilephone", "email", "image" }, null,
+			null, null, null, null);
 
 	while (cursor.moveToNext()) {
 	    HashMap<String, Object> item = new HashMap<String, Object>();
 	    item.put("_id", cursor.getInt(cursor.getColumnIndex("_id")));
 	    item.put("name", cursor.getString(cursor.getColumnIndex("name")));
-	    item.put("mobilephone",
-		    cursor.getString(cursor.getColumnIndex("mobilephone")));
+	    item.put("mobilephone", cursor.getString(cursor.getColumnIndex("mobilephone")));
 	    item.put("email", cursor.getString(cursor.getColumnIndex("email")));
-	    item.put("imageid", cursor.getInt(cursor.getColumnIndex("imageid")));
+	    item.put("image", Utils.cursorToBmp(cursor, cursor.getColumnIndex("image")));
+	    list.add(item);
+	}
+
+	return list;
+    }
+
+    public ArrayList<HashMap<String, Object>> getOtherUser(String _id) {
+	ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
+	Cursor cursor = null;
+	cursor = dbInstance.query(DB_TABLENAME,
+		new String[] { "_id", "name", "mobilephone", "email", "image" }, "_id <> ?",
+		new String[] { _id }, null, null, null);
+
+	while (cursor.moveToNext()) {
+	    HashMap<String, Object> item = new HashMap<String, Object>();
+	    item.put("_id", cursor.getInt(cursor.getColumnIndex("_id")));
+	    item.put("name", cursor.getString(cursor.getColumnIndex("name")));
+	    item.put("mobilephone", cursor.getString(cursor.getColumnIndex("mobilephone")));
+	    item.put("email", cursor.getString(cursor.getColumnIndex("email")));
+	    item.put("image", Utils.cursorToBmp(cursor, cursor.getColumnIndex("image")));
 	    list.add(item);
 	}
 
@@ -138,10 +160,9 @@ public class DBHelper {
 	values.put("name", user.username);
 	values.put("mobilephone", user.mobilePhone);
 	values.put("email", user.email);
-	values.put("imageid", user.imageId);
+	values.put("image", user.image);
 
-	dbInstance.update(DB_TABLENAME, values, "_id=?",
-		new String[] { String.valueOf(user._id) });
+	dbInstance.update(DB_TABLENAME, values, "_id=?", new String[] { String.valueOf(user._id) });
     }
 
     /**
@@ -154,8 +175,7 @@ public class DBHelper {
      * @throws
      */
     public void delete(int _id) {
-	dbInstance.delete(DB_TABLENAME, "_id=?",
-		new String[] { String.valueOf(_id) });
+	dbInstance.delete(DB_TABLENAME, "_id=?", new String[] { String.valueOf(_id) });
     }
 
     /**
@@ -181,8 +201,8 @@ public class DBHelper {
      * @throws
      */
     public int getTotalCount() {
-	Cursor cursor = dbInstance.query(DB_TABLENAME,
-		new String[] { "count(*)" }, null, null, null, null, null);
+	Cursor cursor = dbInstance.query(DB_TABLENAME, new String[] { "count(*)" }, null, null, null, null,
+		null);
 	cursor.moveToNext();
 	return cursor.getInt(0);
     }
@@ -200,18 +220,16 @@ public class DBHelper {
     public ArrayList<HashMap<String, Object>> getUsers(String condition) {
 	ArrayList<HashMap<String, Object>> list = new ArrayList<HashMap<String, Object>>();
 
-	String sql = "select * from " + DB_TABLENAME
-		+ " where 1=1 and (name like '%" + condition + "%' "
+	String sql = "select * from " + DB_TABLENAME + " where 1=1 and (name like '%" + condition + "%' "
 		+ "or mobilephone like '%" + condition + "%')";
 	Cursor cursor = dbInstance.rawQuery(sql, null);
 	while (cursor.moveToNext()) {
 	    HashMap<String, Object> item = new HashMap<String, Object>();
 	    item.put("_id", cursor.getInt(cursor.getColumnIndex("_id")));
 	    item.put("name", cursor.getString(cursor.getColumnIndex("name")));
-	    item.put("mobilephone",
-		    cursor.getString(cursor.getColumnIndex("mobilephone")));
+	    item.put("mobilephone", cursor.getString(cursor.getColumnIndex("mobilephone")));
 	    item.put("email", cursor.getString(cursor.getColumnIndex("email")));
-	    item.put("imageid", cursor.getInt(cursor.getColumnIndex("imageid")));
+	    item.put("image", Utils.cursorToBmp(cursor, cursor.getColumnIndex("image")));
 	    list.add(item);
 	}
 	return list;
@@ -251,11 +269,9 @@ public class DBHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 	    tableCreate = new StringBuffer();
-	    tableCreate.append("create table ").append(DB_TABLENAME)
-		    .append(" (")
-		    .append("_id integer primary key autoincrement,")
-		    .append("name text,").append("mobilephone text,")
-		    .append("email text,").append("imageid int").append(")");
+	    tableCreate.append("create table ").append(DB_TABLENAME).append(" (")
+		    .append("_id integer primary key autoincrement,").append("name text,")
+		    .append("mobilephone text,").append("email text,").append("image blob").append(")");
 	    Log.d("Tag", tableCreate.toString());
 	    db.execSQL(tableCreate.toString());
 	}
@@ -266,7 +282,6 @@ public class DBHelper {
 	    db.execSQL(sql);
 	    myDBHelper.onCreate(db);
 	}
-
     }
 
 }

@@ -1,3 +1,21 @@
+/**********************************************************************
+ * FILE			：MainActivity.java
+ * PACKAGE		：com.xufan.activity
+ * AUTHOR		：xufan
+ * DATE			：2013-4-15 上午10:27:47
+ * FUNCTION		：
+ *
+ * 杭州思伟版权所有
+ *======================================================================
+ * CHANGE HISTORY LOG
+ *----------------------------------------------------------------------
+ * MOD. NO.|  DATE    | NAME           | REASON            | CHANGE REQ.
+ *----------------------------------------------------------------------
+ *         |          | xufan       | Created           |
+ *
+ * DESCRIPTION:
+ *
+ ***********************************************************************/
 package com.xufan.activity;
 
 import java.io.IOException;
@@ -7,6 +25,7 @@ import java.util.List;
 
 import org.apache.http.util.EncodingUtils;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Notification;
@@ -15,7 +34,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.view.Window;
 
 import com.xufan.callingnumber.R;
 import com.xufan.config.Contents;
@@ -23,17 +41,29 @@ import com.xufan.data.DBHelper;
 import com.xufan.data.User;
 import com.xufan.util.DialogFactory;
 
+/**
+ * 项目名称：CallingNumber
+ * 类名称：MainActivity
+ * 类描述：入口activity
+ * 创建人：xufan
+ * 创建时间：2013-4-14 上午10:27:47
+ * -------------------------------修订历史--------------------------
+ * 修改人：xufan
+ * 修改时间：2013-4-14 上午10:27:47
+ * 修改备注：
+ * @version：
+*/
 public class MainActivity extends Activity {
 
     final int PICK_CONTACT = 0;
     private Dialog mDialog = null;
     SharedPreferences preferences;
     DBHelper helper = new DBHelper(this);
-	
+
+    @SuppressLint("WorldReadableFiles")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
-	requestWindowFeature(Window.FEATURE_NO_TITLE);
 	setContentView(R.layout.activity_main);
 	showNotification();// 显示一下一个notification
 	helper.openDatabase(); // 打开数据库
@@ -52,8 +82,7 @@ public class MainActivity extends Activity {
 			if (mDialog.isShowing())
 			    mDialog.dismiss();// 关闭显示框
 			clearNotification();// 清空notification
-			Intent intent = new Intent(MainActivity.this,
-				LoginActivity.class);
+			Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 			startActivity(intent);
 			finish();
 		    } catch (Exception e) {
@@ -68,8 +97,7 @@ public class MainActivity extends Activity {
 		    try {
 			sleep(1000L);
 			clearNotification();// 清空notification
-			Intent intent = new Intent(MainActivity.this,
-				LoginActivity.class);
+			Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 			startActivity(intent);
 			finish();
 		    } catch (Exception e) {
@@ -110,10 +138,8 @@ public class MainActivity extends Activity {
 	// 创建一个NotificationManager的引用
 	NotificationManager notificationManager = (NotificationManager) this
 		.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-	Notification notification = new Notification.Builder(
-		getApplicationContext()).setTicker("欢迎使用！")
+	Notification notification = new Notification.Builder(getApplicationContext()).setTicker("欢迎使用！")
 		.setSmallIcon(R.drawable.ic_launcher).getNotification();
-
 	notificationManager.notify(Contents.NOTIFICATION_ID, notification);
     }
 
@@ -135,6 +161,15 @@ public class MainActivity extends Activity {
 	mDialog.show();
     }
 
+    /**
+     * @方法名：getPhoneNum
+     * @功能描述：从assets文件夹中获取phone.txt文件
+     * @创建人：xufan
+     * @创建时间：2013-4-17 下午2:16:18
+     * @参数：@return
+     * @返回：List<User>
+     * @throws
+     */
     private List<User> getPhoneNum() {
 	InputStream in = null;
 	List<User> result = new ArrayList<User>();

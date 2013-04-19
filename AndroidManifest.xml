@@ -26,8 +26,12 @@
             </intent-filter>
         </activity>
         <activity android:name="com.xufan.activity.ModifyContactsActivity" />
-        <activity android:name="com.xufan.activity.ContactsActivity" />
+        <activity
+            android:name="com.xufan.activity.ContactsActivity"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity android:name="com.xufan.activity.LoginActivity" />
+        <activity android:name="com.xufan.activity.UserDetailActivity" />
+        <activity android:name="com.xufan.activity.AddNewActivity" />
     </application>
 
 </manifest>

@@ -18,6 +18,8 @@
  ***********************************************************************/
 package com.xufan.data;
 
+import java.io.Serializable;
+
 /**
  * 项目名称：CallingNumber
  * 类名称：User
@@ -30,7 +32,12 @@ package com.xufan.data;
  * 修改备注：
  * @version：
 */
-public class User {
+public class User implements Serializable {
+
+    /** 
+     * @Fields serialVersionUID : TODO 
+    */
+    private static final long serialVersionUID = 1L;
 
     public int _id;
 
@@ -40,7 +47,7 @@ public class User {
 
     public String email;
 
-    public int imageId;
+    public byte[] image;
 
     public int get_id() {
 	return _id;
@@ -74,12 +81,12 @@ public class User {
 	this.email = email;
     }
 
-    public int getImageId() {
-	return imageId;
+    public byte[] getImage() {
+	return image;
     }
 
-    public void setImageId(int imageId) {
-	this.imageId = imageId;
+    public void setImage(byte[] image) {
+	this.image = image;
     }
 
 }
