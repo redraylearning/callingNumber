@@ -86,7 +86,7 @@ public class DBHelper {
     public long insert(User user, Boolean isFirstTime) {
 	ContentValues values = new ContentValues();
 	values.put("name", user.getUsername());
-	values.put("mobilephone", user.getMobilePhone());
+	values.put("mobilephone", user.getMobilePhone().replaceAll(" ", ""));
 	values.put("email", user.getEmail());
 	if (isFirstTime) {
 	    values.put("image", "");
@@ -158,7 +158,7 @@ public class DBHelper {
     public void modify(User user) {
 	ContentValues values = new ContentValues();
 	values.put("name", user.username);
-	values.put("mobilephone", user.mobilePhone);
+	values.put("mobilephone", user.mobilePhone.replaceAll(" ", ""));
 	values.put("email", user.email);
 	values.put("image", user.image);
 
